@@ -1,0 +1,30 @@
+---
+- name: create droplet
+  hosts: localhost 
+  connection: local
+  gather_facts: no
+  vars_prompt: 
+    - name: size
+      prompt: "What size? (e.g 1gb)"
+      private: no 
+
+    - name: name
+      prompt: "what name for the droplet" 
+      private: no 
+  tasks: 
+    - name: Create 1 droplet
+      digital_ocean: 
+        state: present
+        command: droplet
+        name: "{{ name }}"
+        size_id: "{{ size }}"
+        region_id: nyc1
+        image_id: centos-7-x64
+        wait_timeout: 600
+        ssh_key_ids: 23747043
+      register: mydroplet
+
+
+    - name: Get IP 
+      debug: 
+        msg: "IP is {{ mydroplet.droplet.ip_address }}"
